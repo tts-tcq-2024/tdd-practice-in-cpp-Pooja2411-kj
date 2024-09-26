@@ -1,64 +1,36 @@
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#ifndef STRINGCALCULATOR_H
+#define STRINGCALCULATOR_H
+
+#include <string>
+#include <vector>
 #include <stdexcept>
 
-int is_empty_string(const char* input) {
-    return (input == NULL || input[0] == '\0');
-}
+class StringCalculator {
+public:
+    int add(const std::string& numbers);
 
-void extract_custom_delimiter(const char* input, char* delimiter) {
-    int i = 2;     // Start after the initial //
-    delimiter[0] = '\0';
-    while (input[i] != '\0' && input[i] != '\n') {
-        strncat(delimiter, &input[i], 1);
-        i++;
-    }
-}
-void has_custom_delimiter(const char* input, char* delimiter) {
-    if (input[0] == '/' && input[1] == '/')
-        extract_custom_delimiter(input, delimiter);
-    else
-         strcpy(delimiter, ",\n");
-}
+private:
+    std::string delimiter = ",|\n";  // Initialised with Default delimiters
+    std::string numberString;
 
+    std::vector<int> parsedNumbers;
 
-int value_less_than_thousand(const char *input_segment) {
-    int value_check = atoi(input_segment);
-    return (value_check < 1000) ? value_check : 0;
-}
+    void ExtractNumbersAndDelimiters(const std::string& input);
+    void setCustomDelimiter(const std::string& input);
+    void extractNumberString(const std::string& input);
+    void parseNumbers();
 
-void contains_negative(const char* input, const char* delimiter) {
-    char* duplicate_input = strdup(input);
-    char* input_segment = strtok(duplicate_input, delimiter);
-    while (input_segment != NULL) {
-        int value_check = atoi(input_segment);
-        if (value_check < 0) {
-          throw std::runtime_error("negatives not allowed");
-         }
-        input_segment = strtok(NULL, delimiter);
-    }
-    free(duplicate_input);
-}
+    
+    size_t findNextDelimiter(size_t startPos) const;
+    void parseSingleNumber(size_t startPos, size_t pos);
 
-int calculate_sum(const char* input, const char* delimiter) {
-    int sum = 0;
-    char* input_copy = strdup(input); 
-    char* input_segment = strtok(input_copy, delimiter);
-    while (input_segment != NULL) {
-        sum += value_less_than_thousand(input_segment);
-        input_segment = strtok(NULL, delimiter);
-    }
-    free(input_copy); 
-    return sum;
-}
+    void validateNumbers();
+    void checkForNegatives();
+    std::vector<int> gatherNegatives() const;
+    std::string buildNegativeErrorMessage(const std::vector<int>& negatives) const;
+    std::vector<int> filterLargeNumbers();
+    int convertToInt(const std::string& number);
+    int sumOfNumbers();
+};
 
-int add(const char* input) {
-    char delimiter[20];
-    if (is_empty_string(input)) {
-        return 0;
-    }
-    has_custom_delimiter(input, delimiter);
-    contains_negative(input, delimiter);
-    return calculate_sum(input, delimiter);
-}
+#endif
