@@ -12,7 +12,6 @@ int StringCalculator::add(const std::string& numbers) {
     parseNumbers();
     validateNumbers();
     parsedNumbers = filterLargeNumbers();
-
     return sumOfNumbers();
 }
 
@@ -39,12 +38,11 @@ int StringCalculator::convertToInt(const std::string& number) {
     return std::stoi(number);
 }
 
-
 void StringCalculator::parseNumbers() {
     parsedNumbers.clear();
     size_t startPos = 0;
     size_t pos = 0;
-
+    
     // Parse each token from the numberString
     while ((pos = findNextDelimiter(startPos)) != std::string::npos) {
         parseSingleNumber(startPos, pos);
@@ -67,7 +65,6 @@ void StringCalculator::parseSingleNumber(size_t startPos, size_t pos) {
         parsedNumbers.push_back(convertToInt(token));
     }
 }
-
 
 void StringCalculator::validateNumbers() {
     checkForNegatives();
